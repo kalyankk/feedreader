@@ -1,4 +1,4 @@
-package com.kalyankk.feedreader;
+package com.kalyankk.feedreader.util;
 
 public class InvalidFeedConfigurationException extends Exception{
     public InvalidFeedConfigurationException(String msg){

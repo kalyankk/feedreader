@@ -1,9 +1,11 @@
 package com.kalyankk.feedreader;
 
-import com.kalyankk.feedreader.service.FeedService;
-import com.kalyankk.feedreader.util.FeedConfiguration;
-import com.kalyankk.feedreader.util.FeedType;
+import com.kalyankk.feedreader.service.DataCollectorService;
+import com.kalyankk.feedreader.config.FeedConfiguration;
+import com.kalyankk.feedreader.config.FeedType;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Demo {
@@ -32,12 +34,11 @@ public class Demo {
 
 
         FeedConfiguration rss2FeedConfig = getRSS2FeedConfiguration();
-        FeedService.startService(rss2FeedConfig);
+        DataCollectorService d1 = DataCollectorService.startService(rss2FeedConfig);
 
 
         FeedConfiguration jsonFeedConfig = getJSONFeedConfiguration();
-        FeedService.startService(jsonFeedConfig);
-
+        DataCollectorService d2 = DataCollectorService.startService(jsonFeedConfig);
 
     }
 
@@ -48,7 +49,7 @@ public class Demo {
                 .enableCategory(true)
                 .enableGuid(true)
                 .setFeedType(FeedType.RSS2)
-                .setInterval(30, TimeUnit.MINUTES)
+                .setInterval(1, TimeUnit.MINUTES)
                 .setTablePrefixName("First")
                 .build();
     }

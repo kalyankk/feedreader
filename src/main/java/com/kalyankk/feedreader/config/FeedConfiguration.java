@@ -1,6 +1,5 @@
-package com.kalyankk.feedreader.util;
+package com.kalyankk.feedreader.config;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 public class FeedConfiguration {

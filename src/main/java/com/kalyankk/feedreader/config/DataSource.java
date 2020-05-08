@@ -1,4 +1,4 @@
-package com.kalyankk.feedreader.service;
+package com.kalyankk.feedreader.config;
 
 import java.sql.Connection;
 import java.sql.SQLException;

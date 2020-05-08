@@ -1,14 +1,27 @@
 package com.kalyankk.feedreader.service;
 
-import com.kalyankk.feedreader.InvalidFeedConfigurationException;
-import com.kalyankk.feedreader.util.FeedConfiguration;
-import com.kalyankk.feedreader.util.FeedType;
+import com.kalyankk.feedreader.util.FeedItem;
+import com.kalyankk.feedreader.util.InvalidFeedConfigurationException;
+import com.kalyankk.feedreader.config.DataSource;
+import com.kalyankk.feedreader.config.FeedConfiguration;
+import com.kalyankk.feedreader.config.FeedType;
 
 import java.sql.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class FeedService {
+public class DataCollectorService{
 
-    public static void startService(FeedConfiguration config) throws Exception{
+    private FeedConfiguration config;
+    private String tableName;
+    private Timer timer;
+
+    private DataCollectorService(FeedConfiguration config) {
+        this.config = config;
+        timer = new Timer();
+    }
+
+    public static DataCollectorService startService(FeedConfiguration config) throws Exception{
 
         if(config.getFeedUrl() == null)
             throw new InvalidFeedConfigurationException("Feed URL cannot be null");
@@ -27,15 +40,14 @@ public class FeedService {
             throw new InvalidFeedConfigurationException("At least one column has to be enabled");
 
 
-        int lastInsertedId = prepareDatabaseTable(config);
-        String tableName = config.getTablePrefixName()+"_items_"+lastInsertedId;
+        DataCollectorService dataCollectorService = new DataCollectorService(config);
+        dataCollectorService.prepareDatabaseTable();
 
-
-        //then start timer task to get feed from url and save it to database
-
+        dataCollectorService.schedule();
+        return dataCollectorService;
     }
 
-    private static int prepareDatabaseTable(FeedConfiguration config) throws SQLException {
+    private void prepareDatabaseTable() throws SQLException {
 
         Connection dbConn = DataSource.getConnection();
 
@@ -83,8 +95,30 @@ public class FeedService {
         Statement createTableStmt = dbConn.createStatement();
         createTableStmt.executeUpdate(createTableSql);
 
-        return last_inserted_id;
-
+        tableName = config.getTablePrefixName()+"_items_"+last_inserted_id;
     }
 
+    private void schedule()
+    {
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                //here get feed, update db
+                System.out.println("Starting feed reader and writer");
+                try {
+                    for (FeedItem feedItem : FeedReader.getFeedItems(config.getFeedUrl(), config.getFeedType())) {
+                        try {
+                            FeedWriter.saveFeedItem(feedItem, config, tableName);
+                        } catch (SQLException sqlException) {
+                            System.err.println("Exception while saving feed to table :" + tableName + ":" + sqlException.getMessage());
+                            sqlException.printStackTrace();
+                        }
+                    }
+                }catch (Exception e){
+                    System.out.println("FeedReader : Unable to process : " + config.getFeedUrl());
+                    e.printStackTrace();
+                }
+            }
+        }, 0, config.getIntervalSeconds() * 1000);
+    }
 }
