@@ -82,14 +82,14 @@ public class DataCollectorService{
         //create table
         String createTableSql = "CREATE TABLE "+ config.getTablePrefixName()+ "_items_" +last_inserted_id+
                 "(id INTEGER not NULL AUTO_INCREMENT, " +
-                (config.getTitleEnabled()?" title VARCHAR(255), ":"") +
-                (config.getDescriptionEnabled()?" description VARCHAR(255), ":"") +
-                (config.getLinkEnabled()?" link VARCHAR(255), ":"") +
-                (config.getAuthorEnabled()?" author VARCHAR(255), ":"") +
-                (config.getCategoryEnabled()?" category VARCHAR(255), ":"") +
-                (config.getGuidEnabled()?" guid VARCHAR(255), ":"") +
-                (config.getPubDateEnabled()?" pub_date VARCHAR(255), ":"") +
-                (config.getSourceEnabled()?" source VARCHAR(255), ":"") +
+                (config.getTitleEnabled()?" title VARCHAR(1000), ":"") +
+                (config.getDescriptionEnabled()?" description TEXT, ":"") +
+                (config.getLinkEnabled()?" link VARCHAR(500), ":"") +
+                (config.getAuthorEnabled()?" author VARCHAR(200), ":"") +
+                (config.getCategoryEnabled()?" category VARCHAR(200), ":"") +
+                (config.getGuidEnabled()?" guid VARCHAR(200), ":"") +
+                (config.getPubDateEnabled()?" pub_date VARCHAR(200), ":"") +
+                (config.getSourceEnabled()?" source VARCHAR(500), ":"") +
                 " PRIMARY KEY ( id ))";
 
         Statement createTableStmt = dbConn.createStatement();
@@ -104,7 +104,6 @@ public class DataCollectorService{
             @Override
             public void run() {
                 //here get feed, update db
-                System.out.println("Starting feed reader and writer");
                 try {
                     for (FeedItem feedItem : FeedReader.getFeedItems(config.getFeedUrl(), config.getFeedType())) {
                         try {
