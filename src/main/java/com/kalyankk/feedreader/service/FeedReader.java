@@ -6,6 +6,8 @@ import com.kalyankk.feedreader.util.InvalidFeedConfigurationException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -20,24 +22,33 @@ import java.util.Iterator;
 import java.util.List;
 
 public class FeedReader {
+    private static final Logger logger = LoggerFactory.getLogger(FeedReader.class);
 
     public static List<FeedItem> getFeedItems(String uri, FeedType feedType) throws Exception{
-        if(feedType == FeedType.RSS2)
+        if(feedType == FeedType.RSS2) {
             return parseRSS2Feed(uri);
-        else if(feedType == FeedType.JSON)
+        }
+        else if(feedType == FeedType.JSON) {
             return parseJSONFeed(uri);
+        }
+
+        logger.error("Parser not yet implemented for FeedType : " + feedType.toString());
+
         return new ArrayList<FeedItem>();
     }
 
-    public static List<FeedItem> parseRSS2Feed(String uri) throws Exception{
+    public static List<FeedItem> parseRSS2Feed(String location) throws Exception{
+        logger.info("Preparing XML based RSS2.0 Feed parser using SAX Parser for " + location);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
         RSS2Handler rss2Handler = new RSS2Handler();
-        saxParser.parse(uri, rss2Handler);
+        saxParser.parse(location, rss2Handler);
         return rss2Handler.getFeedItemList();
     }
 
     public static List<FeedItem> parseJSONFeed(String location) throws Exception{
+        logger.info("Preparing JSON based RSS Feed parser using org.json.simple library for " + location);
+
         JSONObject obj ;
         if(location.startsWith("http://") || location.startsWith("https://"))
         {

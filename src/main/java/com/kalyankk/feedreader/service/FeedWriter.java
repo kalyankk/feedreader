@@ -1,8 +1,11 @@
 package com.kalyankk.feedreader.service;
 
+import com.kalyankk.feedreader.Demo;
 import com.kalyankk.feedreader.config.DataSource;
 import com.kalyankk.feedreader.config.FeedConfiguration;
 import com.kalyankk.feedreader.util.FeedItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +15,8 @@ import java.util.List;
 
 public class FeedWriter {
 
+    private static final Logger logger = LoggerFactory.getLogger(FeedWriter.class);
+
     public static void saveFeedItem(FeedItem feedItem, FeedConfiguration config, String tableName) throws SQLException {
         //save feed item to dtabase
 
@@ -20,15 +25,19 @@ public class FeedWriter {
             //if already exists, skip
             Connection c = DataSource.getConnection();
             PreparedStatement s ;
+            String logMsg;
             if(!config.getLinkEnabled()) {
+                logMsg = "Feed item with guid : " + feedItem.getGuid() +" exists on table " + tableName;
                 s = c.prepareStatement("select id from "+tableName+" where guid like ?");
                 s.setString(1, feedItem.getGuid());
             }
             else if(!config.getGuidEnabled()) {
+                logMsg = "Feed item with link : " + feedItem.getLink() +" exists on table " + tableName;
                 s = c.prepareStatement("select id from "+tableName+" where link like ?");
                 s.setString(1, feedItem.getLink());
             }
             else {
+                logMsg = "Fedd item with guid : " + feedItem.getGuid() + " url : "+ feedItem +" exists on table " + tableName;
                 s = c.prepareStatement("select id from "+tableName+" where guid like ? or link like ?");
                 s.setString(1, feedItem.getGuid());
                 s.setString(2, feedItem.getLink());
@@ -36,6 +45,8 @@ public class FeedWriter {
 
             if(s.executeQuery().next())
             {
+                //logger.info(logMsg, Boolean.TRUE);
+                //logger.warn("duplicate record, skip insert to database table");
                 c.close();
                 return;
             }
@@ -76,7 +87,7 @@ public class FeedWriter {
             sb1.append("source,");
             sb2.append("?,");
         }
-//        System.out.println(sb1.substring(0, sb1.length()-1)+")"+sb2.substring(0, sb2.length()-1)+")");
+        logger.info("Executing " + sb1.substring(0, sb1.length()-1)+")"+sb2.substring(0, sb2.length()-1)+")");
         Connection conn = DataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sb1.substring(0, sb1.length()-1)+")"+sb2.substring(0, sb2.length()-1)+")");
         int i = 1;

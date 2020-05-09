@@ -3,6 +3,8 @@ package com.kalyankk.feedreader;
 import com.kalyankk.feedreader.service.DataCollectorService;
 import com.kalyankk.feedreader.config.FeedConfiguration;
 import com.kalyankk.feedreader.util.FeedType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,11 +34,18 @@ public class Demo {
 
 
         FeedConfiguration rss2FeedConfig = getRSS2FeedConfiguration();
-        DataCollectorService d1 = DataCollectorService.startService(rss2FeedConfig);
+        DataCollectorService d1 = DataCollectorService.initializeService(rss2FeedConfig);
+        d1.startService();
 
+        //if(d1.isRunning()) d1.stopService();
+        //if(!d1.isRunning()) d1.startService();
 
         FeedConfiguration jsonFeedConfig = getJSONFeedConfiguration();
-        DataCollectorService d2 = DataCollectorService.startService(jsonFeedConfig);
+        DataCollectorService d2 = DataCollectorService.initializeService(jsonFeedConfig);
+        d2.startService();
+
+        //if(d2.isRunning()) d2.stopService();
+        //if(!d2.isRunning()) d2.startService();
 
     }
 
