@@ -4,7 +4,7 @@ import com.kalyankk.feedreader.util.FeedItem;
 import com.kalyankk.feedreader.util.InvalidFeedConfigurationException;
 import com.kalyankk.feedreader.config.DataSource;
 import com.kalyankk.feedreader.config.FeedConfiguration;
-import com.kalyankk.feedreader.config.FeedType;
+import com.kalyankk.feedreader.util.FeedType;
 
 import java.sql.*;
 import java.util.Timer;

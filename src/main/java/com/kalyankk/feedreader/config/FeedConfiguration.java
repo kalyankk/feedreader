@@ -1,5 +1,7 @@
 package com.kalyankk.feedreader.config;
 
+import com.kalyankk.feedreader.util.FeedType;
+
 import java.util.concurrent.TimeUnit;
 
 public class FeedConfiguration {

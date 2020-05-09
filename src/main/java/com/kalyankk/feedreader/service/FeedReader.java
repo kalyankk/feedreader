@@ -1,6 +1,6 @@
 package com.kalyankk.feedreader.service;
 
-import com.kalyankk.feedreader.config.FeedType;
+import com.kalyankk.feedreader.util.FeedType;
 import com.kalyankk.feedreader.util.FeedItem;
 import com.kalyankk.feedreader.util.InvalidFeedConfigurationException;
 import org.json.simple.JSONArray;

@@ -1,4 +1,4 @@
-package com.kalyankk.feedreader.config;
+package com.kalyankk.feedreader.util;
 
 public enum FeedType {
     JSON("JSON"), // Refer: https://jsonfeed.org/mappingrssandatom

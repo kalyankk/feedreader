@@ -2,10 +2,8 @@ package com.kalyankk.feedreader;
 
 import com.kalyankk.feedreader.service.DataCollectorService;
 import com.kalyankk.feedreader.config.FeedConfiguration;
-import com.kalyankk.feedreader.config.FeedType;
+import com.kalyankk.feedreader.util.FeedType;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Demo {
