@@ -15,6 +15,33 @@ public class FeedWriter {
     public static void saveFeedItem(FeedItem feedItem, FeedConfiguration config, String tableName) throws SQLException {
         //save feed item to dtabase
 
+        if(config.getGuidEnabled() || config.getLinkEnabled()) {
+            //check if guid / link already exists
+            //if already exists, skip
+            Connection c = DataSource.getConnection();
+            PreparedStatement s ;
+            if(!config.getLinkEnabled()) {
+                s = c.prepareStatement("select id from "+tableName+" where guid like ?");
+                s.setString(1, feedItem.getGuid());
+            }
+            else if(!config.getGuidEnabled()) {
+                s = c.prepareStatement("select id from "+tableName+" where link like ?");
+                s.setString(1, feedItem.getLink());
+            }
+            else {
+                s = c.prepareStatement("select id from "+tableName+" where guid like ? or link like ?");
+                s.setString(1, feedItem.getGuid());
+                s.setString(2, feedItem.getLink());
+            }
+
+            if(s.executeQuery().next())
+            {
+                c.close();
+                return;
+            }
+            c.close();
+        }
+
         StringBuilder sb1 = new StringBuilder("INSERT into "+tableName+" (");
         StringBuilder sb2 = new StringBuilder(" values (");
         if(config.getTitleEnabled()) {

@@ -50,7 +50,7 @@ public class Demo {
                 .enableGuid(true)
                 .setFeedType(FeedType.RSS2)
                 .setInterval(1, TimeUnit.MINUTES)
-                .setTablePrefixName("First")
+                .setTablePrefixName("xml_feed")
                 .build();
     }
 
@@ -63,6 +63,8 @@ public class Demo {
                 .enableSource(true)
                 .enableGuid(true)
                 .setFeedType(FeedType.JSON)
+                .setInterval(2, TimeUnit.MINUTES)
+                .setTablePrefixName("json_feed")
                 .build();
     }
 }
